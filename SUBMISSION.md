@@ -66,7 +66,17 @@ The main backend endpoint is `/api/invoices/process`. The UI calls it with `regi
 
 **What you left out, and why**
 
-I did not add persistence, authentication, a batch queue, or deployment packaging. Those would be required before production, but they would not prove the most important parts of this assignment. I focused the time on extraction, verification, review, and the accounting API integration.
+I treated the 8 hours as a product-slice exercise, not a production build. My priority order was: first prove that invoices can become structured data, then prove the data is checked before accounting, then give a reviewer a usable correction path.
+
+I left out these pieces deliberately:
+
+| Cut item | Why I cut it for the 8-hour version |
+|---|---|
+| Persistent database / review queue | Useful for production, but not required to prove extraction, validation, and accounting registration. The current review state is in memory/browser state. |
+| Authentication and reviewer roles | Important before real use, but it would not change whether the invoice intake flow works. I documented it as the next priority. |
+| Batch processing | The sample set is only 12 invoices, and a single-invoice review flow makes validation behavior easier to inspect. |
+| Deployment packaging / Docker | Local setup is enough for the take-home. I spent the time on correctness checks and the UI review workflow instead. |
+| Full OCR provider comparison | I used PaddleOCR locally and documented Azure Document Intelligence / Google Document AI as production candidates. A proper comparison would need field-level scoring across the samples. |
 
 ## 4. Design and technology choices
 
