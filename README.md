@@ -19,7 +19,7 @@ The route layer is intentionally thin. OCR, LLM extraction, supplier matching, v
 
 ## Prerequisites
 
-- Python 3.11+ for the Invoice Agent app
+- Python 3.11 or 3.12 for the Invoice Agent app
 - Python 3.9+ is enough for the supplied `src/backend/accounting_api.py` mock by itself
 - The project virtual environment, or a new venv with `requirements.txt`
 - PaddleOCR and PaddlePaddle for scanned PDFs/images
@@ -33,7 +33,7 @@ Use Windows Command Prompt (`cmd.exe`):
 ```cmd
 git clone https://github.com/Shariar-Alfaz/invoice-agent.git
 cd invoice-agent
-py -3.11 -m venv src\backend\.venv
+python -m venv src\backend\.venv
 src\backend\.venv\Scripts\python.exe -m pip install --upgrade pip
 src\backend\.venv\Scripts\python.exe -m pip install -r requirements.txt
 copy .env.example .env
@@ -149,7 +149,7 @@ Interpreter setup:
 - Go to `File > Settings > Project > Python Interpreter`.
 - Add a local interpreter.
 - Use existing interpreter: `<repo>\src\backend\.venv\Scripts\python.exe`.
-- If the venv does not exist yet, create it from PyCharm or run `py -3.11 -m venv src\backend\.venv` in the PyCharm terminal.
+- If the venv does not exist yet, create it from PyCharm or run `python -m venv src\backend\.venv` in the PyCharm terminal.
 - Install dependencies from the PyCharm terminal:
 
 ```cmd

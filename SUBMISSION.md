@@ -10,7 +10,7 @@ Windows Command Prompt setup from a fresh clone:
 ```cmd
 git clone https://github.com/Shariar-Alfaz/invoice-agent.git
 cd invoice-agent
-py -3.11 -m venv src\backend\.venv
+python -m venv src\backend\.venv
 src\backend\.venv\Scripts\python.exe -m pip install --upgrade pip
 src\backend\.venv\Scripts\python.exe -m pip install -r requirements.txt
 copy .env.example .env
