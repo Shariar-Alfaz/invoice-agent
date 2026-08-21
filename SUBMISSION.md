@@ -44,7 +44,7 @@ The flow is:
 
 For the backend, I used FastAPI and Pydantic v2. They are quick to work with, strongly typed enough for this size of project, and easy to test. The domain layer contains invoice models, partner models, validation, and supplier matching. The infrastructure layer contains the OCR service, LLM adapter, and accounting API client.
 
-For OCR, the app first tries PyMuPDF on text-layer PDFs. That is fast and avoids unnecessary OCR when the text is already embedded. Scanned PDFs and image files go through PaddleOCR configured for Japanese. I used local OCR for the demo to keep the project runnable without a paid OCR account.
+For OCR, the app first tries PyMuPDF on text-layer PDFs. That is fast and avoids unnecessary OCR when the text is already embedded. Scanned PDFs and image files go through PaddleOCR configured for Japanese. I used local OCR for the demo to keep the project runnable without a paid OCR account. For production, my preferred OCR/document extraction service would be **Google Document AI Form Parser or Custom Extractor**, because invoice table extraction is more important than raw text recognition alone.
 
 For LLM extraction, I used Gemini through a small `InvoiceExtractionService` abstraction. The configured model is `gemini-3.6-flash`, with fallback models available through environment variables. The LLM is asked to return strict structured JSON. It is not asked to choose the accounting `partner_code`, and it is not allowed to decide whether an invoice should be posted.
 
@@ -56,6 +56,7 @@ The committed `.env.example` documents the environment variables needed to run t
 |---|---|---|
 | Gemini API | Structured extraction from OCR/text | `LLM_PROVIDER=gemini`, `LLM_API_KEY`, `LLM_MODEL`, `LLM_BASE_URL` |
 | PaddleOCR | Local Japanese OCR for scanned invoices | `OCR_LANGUAGE=japan` |
+| Google Document AI Form Parser / Custom Extractor | Recommended production OCR/document extraction option | Production replacement for local PaddleOCR |
 | PrimeNG / PrimeUI | Review UI controls and licensed PrimeUI integration | `PRIMEUI_LICENSE` |
 | Mock accounting API | Required assignment API | `ACCOUNTING_API_KEY=demo-key-1234` |
 
@@ -105,4 +106,4 @@ Before submitting, the app shapes the payload to match the API: dates are `YYYY-
 
 1. Add persistence for review cases, original files, OCR text, extracted JSON, validation errors, reviewer approvals, and accounting responses.
 2. Add authenticated reviewer roles and an audit log so approval and submit actions are traceable.
-3. Compare PaddleOCR with a paid document extraction service on the 12 sample invoices, measuring field accuracy, table accuracy, and how often a reviewer still has to fix the output.
+3. Compare PaddleOCR with Google Document AI Form Parser / Custom Extractor on the 12 sample invoices, measuring field accuracy, table accuracy, and how often a reviewer still has to fix the output.
