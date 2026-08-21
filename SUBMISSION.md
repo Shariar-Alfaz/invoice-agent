@@ -121,7 +121,7 @@ I also added a reconciliation step for OCR table mistakes. Invoice 12 exposed th
 
 **A case where the AI got it wrong** (one example is enough, if you have one)
 
-On scanned invoices, extraction sometimes missed a line unit, misread a registration number, or shifted table amounts. Those cases do not go straight to accounting. Missing units and invalid registration numbers become review issues, and clicking the issue focuses the related field. The invoice 12 amount problem is covered by a unit test so the same class of error is less likely to come back unnoticed.
+Most of the mistakes came from OCR on scanned invoices, not from the accounting rules. In some cases the extracted text missed line-item units or quantities. In other cases it produced the wrong total amount or misread the supplier registration number. I handled those cases by sending the invoice to review instead of submitting it directly. The UI shows the issue, lets the reviewer click it to jump to the related field, and blocks submission until the data is corrected and approved.
 
 ## 6. Integrating with the accounting system
 
