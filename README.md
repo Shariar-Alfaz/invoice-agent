@@ -26,12 +26,21 @@ The route layer is intentionally thin. OCR, LLM extraction, supplier matching, v
 - A Gemini API key, or another configured LLM provider
 - Node.js/npm for the optional review UI
 
-## Installation
+## Quick Start From GitHub
 
-```powershell
-cd E:\projects\invoice-agent
-.\src\backend\.venv\Scripts\python.exe -m pip install -r requirements.txt
+Use Windows Command Prompt (`cmd.exe`):
+
+```cmd
+git clone https://github.com/Shariar-Alfaz/invoice-agent.git
+cd invoice-agent
+py -3.11 -m venv src\backend\.venv
+src\backend\.venv\Scripts\python.exe -m pip install --upgrade pip
+src\backend\.venv\Scripts\python.exe -m pip install -r requirements.txt
+copy .env.example .env
+notepad .env
 ```
+
+Fill `LLM_API_KEY` and `PRIMEUI_LICENSE` in `.env`.
 
 If PaddleOCR installation is too heavy for a quick local review, the API still starts and text-layer PDFs can be detected with PyMuPDF, but scanned documents will return a clear OCR configuration error.
 
@@ -78,13 +87,12 @@ The assignment demo uses the following services and configuration names:
 
 Use `.env.example` as the committed template. Real Gemini and PrimeUI values should be placed in `.env` locally or supplied through a private submission channel, not committed into repository history.
 
-## Start Both APIs
+## Start Both APIs From CMD
 
-Single command:
+From the repository root:
 
-```powershell
-cd E:\projects\invoice-agent
-.\src\backend\.venv\Scripts\python.exe src\backend\run_server.py
+```cmd
+src\backend\.venv\Scripts\python.exe src\backend\run_server.py
 ```
 
 This starts:
@@ -96,15 +104,14 @@ This starts:
 
 In one terminal:
 
-```powershell
-cd E:\projects\invoice-agent
-.\src\backend\.venv\Scripts\python.exe src\backend\accounting_api.py
+```cmd
+src\backend\.venv\Scripts\python.exe src\backend\accounting_api.py
 ```
 
 Check it:
 
-```powershell
-Invoke-RestMethod http://localhost:8080/health
+```cmd
+curl http://localhost:8080/health
 ```
 
 Swagger UI in debug mode:
@@ -119,8 +126,8 @@ Swagger is available only when `DEBUG=true`. It intentionally shows only the sin
 
 In another terminal:
 
-```powershell
-cd E:\projects\invoice-agent\src\frontend
+```cmd
+cd src\frontend
 npm install
 npm start
 ```
@@ -133,27 +140,39 @@ http://localhost:4200
 
 The UI calls `/api/invoices/process?register=false` first, shows OCR/LLM confidence, validation issues, editable invoice fields, editable line items, and then posts the reviewed payload to the accounting API through the backend.
 
-PyCharm FastAPI configuration:
+## Run From PyCharm
 
-- App type: FastAPI
-- Application file/module: `E:\projects\invoice-agent\src\backend\app\main.py`
-- App name: `app`
-- Working directory: `E:\projects\invoice-agent\src\backend`
-- Python interpreter: `E:\projects\invoice-agent\src\backend\.venv\Scripts\python.exe`
-- Additional uvicorn parameters: `--host 127.0.0.1 --port 8000`
+Open the repository root folder, for example `E:\projects\invoice-agent`.
 
-Equivalent module command:
+Interpreter setup:
 
-```powershell
-cd E:\projects\invoice-agent\src\backend
-.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+- Go to `File > Settings > Project > Python Interpreter`.
+- Add a local interpreter.
+- Use existing interpreter: `<repo>\src\backend\.venv\Scripts\python.exe`.
+- If the venv does not exist yet, create it from PyCharm or run `py -3.11 -m venv src\backend\.venv` in the PyCharm terminal.
+- Install dependencies from the PyCharm terminal:
+
+```cmd
+src\backend\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-If PyCharm uses `E:\projects\invoice-agent\src` as the working directory, use this module path instead:
+Backend run configuration, recommended:
 
-```powershell
-cd E:\projects\invoice-agent\src
-.\backend\.venv\Scripts\python.exe -m uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000
+- Type: `Python`
+- Name: `Run both APIs`
+- Script path: `<repo>\src\backend\run_server.py`
+- Working directory: `<repo>`
+- Python interpreter: `<repo>\src\backend\.venv\Scripts\python.exe`
+- Environment: no extra PyCharm plugin is required; the app reads `.env` automatically from the repository root or `src/backend`
+
+This starts both `http://localhost:8080` and `http://127.0.0.1:8000`.
+
+Frontend from PyCharm terminal:
+
+```cmd
+cd src\frontend
+npm install
+npm start
 ```
 
 ## API Examples

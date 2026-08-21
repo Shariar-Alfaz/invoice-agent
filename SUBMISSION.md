@@ -3,7 +3,39 @@
 - Name: Shariar Alfaz
 - Submission date (YYYY-MM-DD): 2026-08-21
 - Hours actually spent: 8
-- Repository / how to run it: from the repository root, run `.\src\backend\.venv\Scripts\python.exe src\backend\run_server.py`. This starts the mock accounting API on `http://localhost:8080` and the Invoice Agent API on `http://127.0.0.1:8000`. In another terminal, run the UI from `src/frontend` with `npm start`, then open `http://localhost:4200`. Swagger is available at `http://127.0.0.1:8000/docs` when `DEBUG=true`. The backend virtual environment is under `src/backend/.venv`.
+- Repository / how to run it: Git repository: `https://github.com/Shariar-Alfaz/invoice-agent`.
+
+Windows Command Prompt setup from a fresh clone:
+
+```cmd
+git clone https://github.com/Shariar-Alfaz/invoice-agent.git
+cd invoice-agent
+py -3.11 -m venv src\backend\.venv
+src\backend\.venv\Scripts\python.exe -m pip install --upgrade pip
+src\backend\.venv\Scripts\python.exe -m pip install -r requirements.txt
+copy .env.example .env
+notepad .env
+```
+
+Fill `LLM_API_KEY` and `PRIMEUI_LICENSE` in `.env`, then start both backend services:
+
+```cmd
+src\backend\.venv\Scripts\python.exe src\backend\run_server.py
+```
+
+This starts the mock accounting API on `http://localhost:8080` and the Invoice Agent API on `http://127.0.0.1:8000`. Swagger is available at `http://127.0.0.1:8000/docs` when `DEBUG=true`.
+
+Start the UI in a second Command Prompt:
+
+```cmd
+cd src\frontend
+npm install
+npm start
+```
+
+Open `http://localhost:4200`.
+
+PyCharm setup: open the repository root, add the interpreter at `src\backend\.venv\Scripts\python.exe`, then create a Python run configuration with script path `src\backend\run_server.py` and working directory set to the repository root. The app reads `.env` automatically from the repository root or `src/backend`. Use PyCharm's terminal to run the frontend commands above.
 
 ## 1. Understanding the request
 
