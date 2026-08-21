@@ -1,0 +1,11 @@
+<div class="mt-5 grid gap-5 xl:grid-cols-2">
+  <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+    <h2 class="text-base font-semibold text-slate-950">OCR Text</h2>
+    <pre class="mt-4 max-h-96 overflow-auto rounded-md bg-slate-950 p-4 text-xs leading-5 text-slate-100">{{ ocr().text }}</pre>
+  </div>
+
+  <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+    <h2 class="text-base font-semibold text-slate-950">Accounting Response</h2>
+    <pre class="mt-4 max-h-96 overflow-auto rounded-md bg-slate-950 p-4 text-xs leading-5 text-slate-100">{{ accountingResponse() || 'Not submitted yet.' | json }}</pre>
+  </div>
+</div>

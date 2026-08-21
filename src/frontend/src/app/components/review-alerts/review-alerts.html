@@ -1,0 +1,67 @@
+@if (hasAlerts()) {
+  <button
+    type="button"
+    class="fixed bottom-6 right-6 z-[1000] inline-flex h-12 items-center gap-3 rounded-full px-4 text-sm font-semibold text-white shadow-lg transition focus:outline-none focus:ring-4 md:bottom-8 md:right-8"
+    [class.bg-red-600]="issueState() === 'error'"
+    [class.hover:bg-red-700]="issueState() === 'error'"
+    [class.focus:ring-red-200]="issueState() === 'error'"
+    [class.bg-amber-500]="issueState() === 'warn'"
+    [class.hover:bg-amber-600]="issueState() === 'warn'"
+    [class.focus:ring-amber-200]="issueState() === 'warn'"
+    [attr.aria-label]="'Open review issues, ' + issueCount() + ' issue' + (issueCount() === 1 ? '' : 's')"
+    (click)="drawerOpen.set(true)"
+  >
+    <i [class]="issueState() === 'error' ? 'pi pi-exclamation-triangle' : 'pi pi-info-circle'"></i>
+    <span>Issues</span>
+    <span class="inline-flex min-w-6 items-center justify-center rounded-full bg-white px-2 py-0.5 text-xs font-bold" [class.text-red-700]="issueState() === 'error'" [class.text-amber-700]="issueState() === 'warn'">
+      {{ issueCount() }}
+    </span>
+  </button>
+
+  <p-drawer
+    header="Review Issues"
+    position="right"
+    appendTo="body"
+    styleClass="review-issues-drawer"
+    [modal]="true"
+    [blockScroll]="true"
+    [dismissible]="true"
+    [style]="{ width: 'min(440px, 94vw)' }"
+    [visible]="drawerOpen()"
+    (visibleChange)="drawerOpen.set($event)"
+  >
+    <div class="flex h-full flex-col gap-4">
+      <div class="grid grid-cols-2 gap-3">
+        <div class="rounded-md border border-red-200 bg-red-50 px-3 py-2">
+          <p class="text-xs font-semibold uppercase tracking-wide text-red-700">Errors</p>
+          <p class="mt-1 text-2xl font-semibold text-red-700">{{ errorCount() }}</p>
+        </div>
+        <div class="rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
+          <p class="text-xs font-semibold uppercase tracking-wide text-amber-700">Warnings</p>
+          <p class="mt-1 text-2xl font-semibold text-amber-700">{{ warningCount() }}</p>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2 overflow-y-auto pr-1">
+        @for (item of alertItems(); track item.raw + item.severity) {
+          <button
+            type="button"
+            class="grid w-full gap-2 rounded-md border bg-white p-3 text-left shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-200 disabled:cursor-default disabled:hover:bg-white"
+            [class.border-red-200]="item.severity === 'error'"
+            [class.border-amber-200]="item.severity === 'warn'"
+            [disabled]="!item.targetId"
+            (click)="focusAlertTarget(item)"
+          >
+            <span class="flex items-start gap-2">
+              <i class="mt-0.5 text-sm" [class.pi-exclamation-triangle]="item.severity === 'error'" [class.pi-info-circle]="item.severity === 'warn'" [class.text-red-600]="item.severity === 'error'" [class.text-amber-600]="item.severity === 'warn'" class="pi"></i>
+              <span class="min-w-0">
+                <span class="block text-sm font-semibold text-slate-950">{{ item.title }}</span>
+                <span class="mt-1 block text-sm leading-5 text-slate-600">{{ item.detail }}</span>
+              </span>
+            </span>
+          </button>
+        }
+      </div>
+    </div>
+  </p-drawer>
+}

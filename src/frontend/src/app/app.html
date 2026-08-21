@@ -1,0 +1,97 @@
+<main class="min-h-dvh bg-[#f4f7fb] text-slate-950">
+  <p-confirmdialog key="back-with-unsubmitted-review" appendTo="body" />
+
+  <section class="border-b border-slate-200 bg-white/95">
+    <div class="mx-auto flex max-w-[1500px] flex-col gap-3 px-6 py-4 lg:flex-row lg:items-center lg:justify-between">
+      <div class="flex min-w-0 items-center gap-3">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-wide text-sky-700">Invoice Agent</p>
+          <h1 class="mt-1 text-2xl font-semibold tracking-normal text-slate-950">Invoice Review</h1>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        @if (store.selectedFile() || store.result() || store.working()) {
+          <button
+            type="button"
+            class="inline-flex h-9 items-center gap-2 rounded-md border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 shadow-sm hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-200"
+            aria-label="Back to upload"
+            title="Back to upload"
+            (click)="confirmBack($event)"
+          >
+            <i class="pi pi-arrow-left text-xs"></i>
+            <span>Back</span>
+          </button>
+          <p-tag value="Review required" severity="warn" />
+          @if (store.hasAccountingResponse()) {
+            <p-tag value="Submitted" severity="success" />
+          } @else {
+            <p-tag value="Not submitted" severity="secondary" />
+          }
+        }
+      </div>
+    </div>
+  </section>
+
+  @if (!store.selectedFile() && !store.result() && !store.working()) {
+    <section class="mx-auto grid max-w-[1120px] gap-6 px-6 py-8 lg:grid-cols-[320px_minmax(0,1fr)]">
+      <app-source-file-panel
+        [selectedFile]="store.selectedFile()"
+        [working]="store.working()"
+        [errorMessage]="store.errorMessage()"
+        (fileSelected)="store.updateSelectedFile($event)"
+        (extract)="store.extractForReview()"
+      />
+
+      <app-empty-review-state />
+    </section>
+  } @else {
+    <section class="mx-auto grid max-w-[1760px] gap-6 px-6 py-6 xl:grid-cols-[280px_minmax(0,1fr)] 2xl:grid-cols-[280px_minmax(0,1fr)_380px]">
+      <aside class="flex flex-col gap-6">
+        <app-source-file-panel
+          [selectedFile]="store.selectedFile()"
+          [working]="store.working()"
+          [errorMessage]="store.errorMessage()"
+          (fileSelected)="store.updateSelectedFile($event)"
+          (extract)="store.extractForReview()"
+        />
+
+        <app-quality-gate [result]="store.result()" />
+      </aside>
+
+      <section class="min-w-0">
+        @if (store.working()) {
+          <app-loading-state />
+        } @else if (store.result(); as invoiceResult) {
+          <app-review-detail
+            [result]="invoiceResult"
+            [partners]="store.partners()"
+            [submitting]="store.submitting()"
+            [hasManualEdits]="store.hasManualEdits()"
+            (addLine)="store.addLine()"
+            (removeLine)="store.removeLine($event)"
+            (invoiceFieldChange)="store.updateInvoiceField($event)"
+            (lineFieldChange)="store.updateLineField($event)"
+            (partnerCodeChange)="store.updatePartnerCode($event)"
+            (recalculate)="store.recalculateTotals()"
+            (refreshPartners)="store.loadPartners()"
+            (approveReviewedEdits)="store.approveReviewedEdits()"
+            (submitReviewed)="store.submitReviewed()"
+          />
+        } @else {
+          <app-empty-review-state />
+        }
+      </section>
+
+      <aside class="min-w-0 xl:col-span-2 2xl:col-span-1">
+        <app-document-preview
+          [file]="store.selectedFile()"
+          [ocr]="store.result()?.ocr ?? null"
+          [previewType]="store.previewType()"
+          [previewUrl]="store.previewUrl()"
+          [previewResourceUrl]="store.previewResourceUrl()"
+        />
+      </aside>
+    </section>
+  }
+</main>

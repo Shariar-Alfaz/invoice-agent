@@ -1,0 +1,165 @@
+<section class="border-b border-slate-200 px-5 py-5">
+  <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+    <div>
+      <h2 class="text-base font-semibold text-slate-950">Invoice Details</h2>
+      <p class="mt-1 text-xs text-slate-500">Review OCR/LLM output before accounting registration.</p>
+    </div>
+    <button pButton type="button" severity="secondary" variant="outlined" size="small" (click)="markForRecalculate()">
+      <i class="pi pi-calculator"></i>
+      <span>Recalculate</span>
+    </button>
+  </div>
+
+  <form class="mt-5 grid gap-x-4 gap-y-4 md:grid-cols-2 xl:grid-cols-3" [formGroup]="form">
+    <label id="invoice-supplier_name" class="field-label">
+      <span>Supplier name</span>
+      <input class="field-input" formControlName="supplier_name" [class.field-input-invalid]="isInvalid('supplier_name')" />
+      @if (isInvalid('supplier_name')) {
+        <p-message severity="error" variant="simple" size="small">{{ errorMessage('supplier_name') }}</p-message>
+      }
+    </label>
+
+    <label id="invoice-supplier_registration_number" class="field-label">
+      <span>Registration number</span>
+      <input class="field-input" formControlName="supplier_registration_number" [class.field-input-invalid]="isInvalid('supplier_registration_number')" />
+      @if (isInvalid('supplier_registration_number')) {
+        <p-message severity="error" variant="simple" size="small">{{ errorMessage('supplier_registration_number') }}</p-message>
+      }
+    </label>
+
+    <label id="invoice-invoice_number" class="field-label">
+      <span>Invoice number</span>
+      <input class="field-input" formControlName="invoice_number" [class.field-input-invalid]="isInvalid('invoice_number')" />
+      @if (isInvalid('invoice_number')) {
+        <p-message severity="error" variant="simple" size="small">{{ errorMessage('invoice_number') }}</p-message>
+      }
+    </label>
+
+    <label id="invoice-issue_date" class="field-label">
+      <span>Issue date</span>
+      <p-datepicker
+        formControlName="issue_date"
+        dateFormat="yy-mm-dd"
+        dataType="string"
+        placeholder="YYYY-MM-DD"
+        iconDisplay="input"
+        inputStyleClass="date-field-input"
+        size="small"
+        appendTo="body"
+        [showIcon]="true"
+        [fluid]="true"
+        [invalid]="isInvalid('issue_date')"
+      />
+      @if (isInvalid('issue_date')) {
+        <p-message severity="error" variant="simple" size="small">{{ errorMessage('issue_date') }}</p-message>
+      }
+    </label>
+
+    <label id="invoice-due_date" class="field-label">
+      <span>Due date</span>
+      <p-datepicker
+        formControlName="due_date"
+        dateFormat="yy-mm-dd"
+        dataType="string"
+        placeholder="YYYY-MM-DD"
+        iconDisplay="input"
+        inputStyleClass="date-field-input"
+        size="small"
+        appendTo="body"
+        [showIcon]="true"
+        [fluid]="true"
+        [invalid]="isInvalid('due_date')"
+      />
+      @if (isInvalid('due_date')) {
+        <p-message severity="error" variant="simple" size="small">{{ errorMessage('due_date') }}</p-message>
+      }
+    </label>
+
+    <label id="invoice-currency" class="field-label">
+      <span>Currency</span>
+      <input class="field-input field-input-readonly" formControlName="currency" readonly aria-readonly="true" [class.field-input-invalid]="isInvalid('currency')" />
+      @if (isInvalid('currency')) {
+        <p-message severity="error" variant="simple" size="small">{{ errorMessage('currency') }}</p-message>
+      }
+    </label>
+
+    <label id="invoice-partner_code" class="field-label md:col-span-2">
+      <span class="flex items-center justify-between gap-3">
+        <span>Partner</span>
+        @if (partners().length === 0) {
+          <button type="button" pButton severity="secondary" variant="text" size="small" (click)="refreshPartners.emit()">
+            <i class="pi pi-refresh"></i>
+            <span>Reload partners</span>
+          </button>
+        }
+      </span>
+      <p-select
+        formControlName="partner_code"
+        [options]="partnerOptions()"
+        [invalid]="isInvalid('partner_code')"
+        optionLabel="label"
+        optionValue="code"
+        size="small"
+        appendTo="body"
+        fluid
+      />
+      @if (isInvalid('partner_code')) {
+        <p-message severity="error" variant="simple" size="small">{{ errorMessage('partner_code') }}</p-message>
+      }
+    </label>
+
+    <label id="invoice-subtotal" class="field-label">
+      <span>Subtotal</span>
+      <p-inputnumber
+        formControlName="subtotal"
+        mode="currency"
+        currency="JPY"
+        locale="ja-JP"
+        size="small"
+        fluid
+        [allowEmpty]="false"
+        [maxFractionDigits]="0"
+        [invalid]="isInvalid('subtotal')"
+      />
+      @if (isInvalid('subtotal')) {
+        <p-message severity="error" variant="simple" size="small">{{ errorMessage('subtotal') }}</p-message>
+      }
+    </label>
+
+    <label id="invoice-tax_amount" class="field-label">
+      <span>Tax amount</span>
+      <p-inputnumber
+        formControlName="tax_amount"
+        mode="currency"
+        currency="JPY"
+        locale="ja-JP"
+        size="small"
+        fluid
+        [allowEmpty]="false"
+        [maxFractionDigits]="0"
+        [invalid]="isInvalid('tax_amount')"
+      />
+      @if (isInvalid('tax_amount')) {
+        <p-message severity="error" variant="simple" size="small">{{ errorMessage('tax_amount') }}</p-message>
+      }
+    </label>
+
+    <label id="invoice-total_amount" class="field-label">
+      <span>Total amount</span>
+      <p-inputnumber
+        formControlName="total_amount"
+        mode="currency"
+        currency="JPY"
+        locale="ja-JP"
+        size="small"
+        fluid
+        [allowEmpty]="false"
+        [maxFractionDigits]="0"
+        [invalid]="isInvalid('total_amount')"
+      />
+      @if (isInvalid('total_amount')) {
+        <p-message severity="error" variant="simple" size="small">{{ errorMessage('total_amount') }}</p-message>
+      }
+    </label>
+  </form>
+</section>

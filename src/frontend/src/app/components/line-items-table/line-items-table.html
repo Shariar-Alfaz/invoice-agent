@@ -1,0 +1,180 @@
+<section class="px-5 py-5">
+  <p-confirmdialog key="line-item-delete" appendTo="body" />
+
+  <div>
+    <div>
+      <h2 class="text-base font-semibold text-slate-950">Line Items</h2>
+      <p class="mt-1 text-xs text-slate-500">Click a cell to edit extracted values inline.</p>
+    </div>
+  </div>
+
+  @if (form.length === 0) {
+    <div class="mt-4">
+      <p-message severity="error" variant="outlined" icon="pi pi-exclamation-triangle">Accounting API requires at least one line item.</p-message>
+    </div>
+  }
+
+  <div class="mt-4 min-w-0 overflow-hidden rounded-lg border border-slate-200">
+    <p-table
+      [value]="lineForms()"
+      editMode="cell"
+      size="small"
+      [scrollable]="true"
+      [showGridlines]="true"
+      [stripedRows]="true"
+      [tableStyle]="{ 'min-width': '60rem' }"
+    >
+      <ng-template #header>
+        <tr>
+          <th class="w-[29%]">Description</th>
+          <th class="w-[10%] text-right">Qty</th>
+          <th class="w-[11%]">Unit</th>
+          <th class="w-[15%] text-right">Unit Price</th>
+          <th class="w-[15%] text-right">Amount</th>
+          <th id="tax-code-header" class="w-[13%]">Tax</th>
+          <th class="w-[7%] text-center">Action</th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-lineForm let-rowIndex="rowIndex">
+        <tr [formGroup]="lineForm">
+          <td [id]="'line-' + rowIndex + '-description'" [pEditableColumn]="lineForm.controls.description.value" pEditableColumnField="description">
+            <p-cell-editor>
+              <ng-template #input>
+                <div class="flex flex-col gap-1">
+                  <input pInputText fluid pSize="small" formControlName="description" [invalid]="isLineInvalid(rowIndex, 'description')" />
+                  @if (isLineInvalid(rowIndex, 'description')) {
+                    <p-message severity="error" variant="simple" size="small">{{ errorMessage(rowIndex, 'description') }}</p-message>
+                  }
+                </div>
+              </ng-template>
+              <ng-template #output>
+                <span class="font-medium text-slate-900">{{ lineForm.controls.description.value || 'Description required' }}</span>
+              </ng-template>
+            </p-cell-editor>
+          </td>
+
+          <td [id]="'line-' + rowIndex + '-quantity'" class="text-right" [pEditableColumn]="lineForm.controls.quantity.value" pEditableColumnField="quantity">
+            <p-cell-editor>
+              <ng-template #input>
+                <div class="flex flex-col gap-1">
+                  <p-inputnumber formControlName="quantity" size="small" fluid [invalid]="isLineInvalid(rowIndex, 'quantity')" />
+                  @if (isLineInvalid(rowIndex, 'quantity')) {
+                    <p-message severity="error" variant="simple" size="small">{{ errorMessage(rowIndex, 'quantity') }}</p-message>
+                  }
+                </div>
+              </ng-template>
+              <ng-template #output>
+                {{ lineForm.controls.quantity.value || '-' }}
+              </ng-template>
+            </p-cell-editor>
+          </td>
+
+          <td [id]="'line-' + rowIndex + '-unit'" [pEditableColumn]="lineForm.controls.unit.value" pEditableColumnField="unit">
+            <p-cell-editor>
+              <ng-template #input>
+                <div class="flex flex-col gap-1">
+                  <input pInputText fluid pSize="small" formControlName="unit" [invalid]="isLineInvalid(rowIndex, 'unit')" />
+                  @if (isLineInvalid(rowIndex, 'unit')) {
+                    <p-message severity="error" variant="simple" size="small">{{ errorMessage(rowIndex, 'unit') }}</p-message>
+                  }
+                </div>
+              </ng-template>
+              <ng-template #output>
+                @if (lineForm.controls.unit.value) {
+                  <span>{{ lineForm.controls.unit.value }}</span>
+                } @else {
+                  <p-tag value="Missing" severity="danger" />
+                }
+              </ng-template>
+            </p-cell-editor>
+          </td>
+
+          <td [id]="'line-' + rowIndex + '-unit_price'" class="text-right" [pEditableColumn]="lineForm.controls.unit_price.value" pEditableColumnField="unit_price">
+            <p-cell-editor>
+              <ng-template #input>
+                <div class="flex flex-col gap-1">
+                  <p-inputnumber formControlName="unit_price" mode="currency" currency="JPY" locale="ja-JP" size="small" fluid [invalid]="isLineInvalid(rowIndex, 'unit_price')" />
+                  @if (isLineInvalid(rowIndex, 'unit_price')) {
+                    <p-message severity="error" variant="simple" size="small">{{ errorMessage(rowIndex, 'unit_price') }}</p-message>
+                  }
+                </div>
+              </ng-template>
+              <ng-template #output>
+                {{ lineForm.controls.unit_price.value === null ? '-' : (lineForm.controls.unit_price.value | currency: 'JPY':'symbol':'1.0-0':'ja-JP') }}
+              </ng-template>
+            </p-cell-editor>
+          </td>
+
+          <td [id]="'line-' + rowIndex + '-amount'" class="text-right" [pEditableColumn]="lineForm.controls.amount.value" pEditableColumnField="amount">
+            <p-cell-editor>
+              <ng-template #input>
+                <div class="flex flex-col gap-1">
+                  <p-inputnumber formControlName="amount" mode="currency" currency="JPY" locale="ja-JP" size="small" fluid [invalid]="isLineInvalid(rowIndex, 'amount') || hasLineAmountMismatch(rowIndex)" />
+                  @if (isLineInvalid(rowIndex, 'amount')) {
+                    <p-message severity="error" variant="simple" size="small">{{ errorMessage(rowIndex, 'amount') }}</p-message>
+                  }
+                  @if (hasLineAmountMismatch(rowIndex)) {
+                    <p-message severity="error" variant="simple" size="small">Amount must equal quantity x unit price.</p-message>
+                  }
+                </div>
+              </ng-template>
+              <ng-template #output>
+                <span class="font-semibold">{{ lineForm.controls.amount.value | currency: 'JPY':'symbol':'1.0-0':'ja-JP' }}</span>
+              </ng-template>
+            </p-cell-editor>
+          </td>
+
+          <td [id]="'line-' + rowIndex + '-tax_code'">
+            <div class="flex flex-col gap-1">
+              <p-selectbutton
+                styleClass="tax-code-toggle"
+                formControlName="tax_code"
+                [options]="taxCodeOptions"
+                optionLabel="label"
+                optionValue="value"
+                size="small"
+                [allowEmpty]="false"
+                [invalid]="isLineInvalid(rowIndex, 'tax_code')"
+                ariaLabelledBy="tax-code-header"
+              />
+              @if (isLineInvalid(rowIndex, 'tax_code')) {
+                <p-message severity="error" variant="simple" size="small">{{ errorMessage(rowIndex, 'tax_code') }}</p-message>
+              }
+            </div>
+          </td>
+
+          <td class="w-20 text-center align-middle">
+            <div class="flex justify-center">
+              <button
+                class="line-delete-button"
+                pButton
+                type="button"
+                severity="danger"
+                variant="text"
+                size="small"
+                (click)="confirmRemoveLine($event, rowIndex)"
+                aria-label="Remove line"
+              >
+                <i class="pi pi-trash" aria-hidden="true"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="7" class="py-8 text-center text-sm text-slate-500">No line items extracted.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <div class="mt-3 flex justify-end">
+    <button pButton type="button" severity="secondary" variant="outlined" size="small" (click)="addLine.emit()">
+      <i class="pi pi-plus"></i>
+      <span>Add Line</span>
+    </button>
+  </div>
+</section>

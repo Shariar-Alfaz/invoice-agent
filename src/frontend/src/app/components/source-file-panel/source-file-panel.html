@@ -1,0 +1,40 @@
+<div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+  <div class="flex items-center justify-between gap-3">
+    <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-700">Source File</h2>
+    <i class="pi pi-file-import text-slate-400"></i>
+  </div>
+
+  <div class="mt-5 flex flex-col gap-4">
+    <label class="block cursor-pointer rounded-md border border-dashed border-slate-300 bg-slate-50 p-4 transition hover:border-sky-300 hover:bg-sky-50">
+      <span class="flex items-center gap-2 text-sm font-medium text-slate-900">
+        <i class="pi pi-upload text-sky-600"></i>
+        <span>Choose invoice</span>
+      </span>
+      <span class="mt-1 block text-xs text-slate-500">PDF, JPG, JPEG, or PNG</span>
+      <input class="sr-only" type="file" accept=".pdf,image/*" (change)="onFileSelected($event)" />
+    </label>
+
+    <div class="rounded-md bg-slate-50 px-3 py-2 text-sm text-slate-700">
+      <span class="block truncate">{{ selectedFile()?.name || 'No file selected' }}</span>
+    </div>
+
+    <button
+      pButton
+      class="mt-1 w-full justify-center"
+      type="button"
+      severity="info"
+      [loading]="working()"
+      [disabled]="!selectedFile() || working()"
+      (click)="extract.emit()"
+    >
+      <i class="pi pi-upload"></i>
+      <span>Extract</span>
+    </button>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="mt-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+      {{ errorMessage() }}
+    </div>
+  }
+</div>

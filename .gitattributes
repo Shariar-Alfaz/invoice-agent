@@ -1,0 +1,16 @@
+*.pdf binary
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.ico binary
+*.zip binary
+
+*.md text
+*.py text
+*.ts text
+*.html text
+*.css text
+*.json text
+*.mjs text
+*.xml text
+*.http text

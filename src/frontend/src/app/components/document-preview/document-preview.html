@@ -1,0 +1,90 @@
+<section class="rounded-lg border border-slate-200 bg-white shadow-sm">
+  <div class="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+    <div>
+      <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-700">Uploaded Invoice</h2>
+      <p class="mt-1 max-w-72 truncate text-xs text-slate-500">{{ file()?.name || 'No file selected' }}</p>
+    </div>
+    @if (previewType() === 'pdf' && previewResourceUrl()) {
+      <button
+        pButton
+        type="button"
+        severity="secondary"
+        variant="text"
+        size="small"
+        iconOnly
+        (click)="pdfPreviewOpen.set(true)"
+        aria-label="Open PDF full screen preview"
+      >
+        <i class="pi pi-window-maximize"></i>
+      </button>
+    } @else {
+      <i class="pi pi-eye text-slate-400"></i>
+    }
+  </div>
+
+  <div class="h-[520px] overflow-hidden bg-slate-100">
+    @if (previewType() === 'image' && previewUrl()) {
+      <div class="flex h-full items-start justify-center overflow-auto p-4">
+        <p-image
+          styleClass="invoice-preview-image block w-full"
+          imageClass="invoice-preview-image__media max-h-none w-full rounded-md border border-slate-200 bg-white object-contain shadow-sm"
+          [src]="previewUrl() ?? undefined"
+          [previewImageSrc]="previewUrl() ?? undefined"
+          [alt]="file()?.name || 'Uploaded invoice preview'"
+          [preview]="true"
+          appendTo="body"
+        >
+          <ng-template #indicator>
+            <div class="flex items-center gap-2 rounded-md bg-slate-950/80 px-3 py-2 text-xs font-semibold text-white shadow-lg">
+              <i class="pi pi-search-plus"></i>
+              <span>Full screen preview</span>
+            </div>
+          </ng-template>
+        </p-image>
+      </div>
+    } @else if (previewType() === 'pdf' && previewResourceUrl()) {
+      <iframe class="h-full w-full border-0 bg-white" [src]="previewResourceUrl()" title="Uploaded PDF invoice preview"></iframe>
+    } @else {
+      <div class="flex h-full flex-col items-center justify-center px-8 text-center">
+        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-slate-400 shadow-sm">
+          <i class="pi pi-file text-xl"></i>
+        </div>
+        <p class="mt-4 text-sm font-medium text-slate-800">Preview unavailable</p>
+        <p class="mt-1 text-xs leading-5 text-slate-500">Upload a PDF or image invoice to inspect it beside the extracted fields.</p>
+      </div>
+    }
+  </div>
+</section>
+
+@if (ocr()?.text) {
+  <section class="mt-5 rounded-lg border border-slate-200 bg-white shadow-sm">
+    <div class="border-b border-slate-200 px-4 py-3">
+      <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-700">OCR Text</h2>
+      <p class="mt-1 text-xs text-slate-500">Raw text detected from the uploaded invoice.</p>
+    </div>
+
+    <div class="max-h-[360px] overflow-auto px-4 py-4">
+      <div class="rounded-lg bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-800">
+        <span class="whitespace-pre-wrap">{{ animatedOcrText() }}</span>
+      </div>
+    </div>
+  </section>
+}
+
+<p-dialog
+  header="PDF Preview"
+  appendTo="body"
+  styleClass="pdf-preview-dialog"
+  contentStyleClass="pdf-preview-dialog__content"
+  [modal]="true"
+  [blockScroll]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '96vw', height: '94vh' }"
+  [visible]="pdfPreviewOpen()"
+  (visibleChange)="pdfPreviewOpen.set($event)"
+>
+  @if (previewResourceUrl()) {
+    <iframe class="h-full w-full border-0 bg-white" [src]="previewResourceUrl()" title="Full screen PDF invoice preview"></iframe>
+  }
+</p-dialog>

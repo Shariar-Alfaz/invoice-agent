@@ -1,0 +1,1 @@
+"""Accounting API adapter."""

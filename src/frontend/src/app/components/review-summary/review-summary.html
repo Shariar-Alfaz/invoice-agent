@@ -1,0 +1,30 @@
+<section class="border-b border-slate-200 bg-white px-5 py-5">
+  <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Invoice</p>
+      <h2 class="mt-1 text-2xl font-semibold tracking-normal text-slate-950">{{ result().extracted_invoice.invoice_number }}</h2>
+      <p class="mt-2 text-sm text-slate-600">{{ result().source_file }} · Status: {{ result().status }}</p>
+    </div>
+
+    <div class="flex flex-col items-start gap-3 lg:items-end">
+      <div class="flex flex-wrap gap-2">
+      @if (result().validation_errors.length === 0) {
+        <p-tag value="No validation errors" severity="success" />
+      } @else {
+        <p-tag value="Validation required" severity="danger" />
+      }
+
+      @if (hasAccountingResponse()) {
+        <p-tag value="Submitted" severity="success" />
+      } @else {
+        <p-tag value="Not submitted" severity="warn" />
+      }
+      </div>
+      <div class="text-left lg:text-right">
+        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Total due</p>
+        <p class="mt-1 text-3xl font-semibold text-slate-950">{{ result().extracted_invoice.total_amount | currency: 'JPY':'symbol':'1.0-0':'ja-JP' }}</p>
+        <p class="mt-1 text-sm text-slate-500">Due {{ result().extracted_invoice.due_date || 'not detected' }}</p>
+      </div>
+    </div>
+  </div>
+</section>

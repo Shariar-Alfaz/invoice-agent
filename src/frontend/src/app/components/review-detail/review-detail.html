@@ -1,0 +1,38 @@
+<article class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+  <app-review-summary [result]="result()" />
+
+  <app-review-alerts
+    [validationErrors]="visibleValidationErrors()"
+    [warnings]="result().warnings"
+  />
+
+  <app-invoice-fields
+    [invoice]="result().extracted_invoice"
+    [partnerCode]="result().partner_code"
+    [partners]="partners()"
+    (invoiceFieldChange)="invoiceFieldChange.emit($event)"
+    (partnerCodeChange)="updatePartnerCode($event)"
+    (recalculate)="recalculate.emit()"
+    (refreshPartners)="refreshPartners.emit()"
+    (validationStateChange)="updateInvoiceValidation($event)"
+  />
+
+  <app-line-items-table
+    [lines]="result().extracted_invoice.lines"
+    (addLine)="addLine.emit()"
+    (removeLine)="removeLine.emit($event)"
+    (lineFieldChange)="lineFieldChange.emit($event)"
+    (validationStateChange)="updateLineValidation($event)"
+  />
+</article>
+
+<app-submit-bar
+  [submitting]="submitting()"
+  [validationErrors]="result().validation_errors"
+  [clientValidationErrors]="clientValidationErrors()"
+  [warnings]="result().warnings"
+  [hasManualEdits]="hasManualEdits()"
+  [submitted]="submitted()"
+  (approveReviewedEdits)="approveReviewedEdits.emit()"
+  (submitReviewed)="submitReviewed.emit()"
+/>

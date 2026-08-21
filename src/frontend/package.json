@@ -1,0 +1,42 @@
+{
+  "name": "frontend",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "prestart": "node scripts/write-primeui-license.mjs",
+    "start": "ng serve",
+    "prebuild": "node scripts/write-primeui-license.mjs",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
+  },
+  "private": true,
+  "packageManager": "npm@11.8.0",
+  "dependencies": {
+    "@angular/cdk": "^22.1.3",
+    "@angular/common": "^22.1.0",
+    "@angular/compiler": "^22.1.0",
+    "@angular/core": "^22.1.0",
+    "@angular/forms": "^22.1.0",
+    "@angular/platform-browser": "^22.1.0",
+    "@angular/router": "^22.1.0",
+    "@primeui/license-manager": "^1.0.0",
+    "@primeuix/themes": "^3.0.0",
+    "@tailwindcss/postcss": "^4.3.3",
+    "postcss": "^8.5.26",
+    "primeicons": "^8.0.0",
+    "primeng": "^22.1.0",
+    "primeui": "^4.1.15",
+    "rxjs": "~7.8.0",
+    "tailwindcss": "^4.3.3",
+    "tailwindcss-primeui": "^0.6.1",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^22.1.5",
+    "@angular/cli": "^22.1.5",
+    "@angular/compiler-cli": "^22.1.0",
+    "prettier": "^3.8.1",
+    "typescript": "~6.0.2"
+  }
+}
