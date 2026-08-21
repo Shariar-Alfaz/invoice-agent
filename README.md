@@ -67,7 +67,7 @@ Do not commit `.env`.
 
 ## Submitted Configuration And Keys
 
-No private API keys or license tokens are committed to this repository. The assignment demo uses the following services and configuration names:
+The assignment demo uses the following services and configuration names:
 
 | Service | Purpose | Config key |
 |---|---|---|
@@ -76,7 +76,7 @@ No private API keys or license tokens are committed to this repository. The assi
 | PaddleOCR | Local Japanese OCR for scanned images/PDFs | `OCR_LANGUAGE=japan` |
 | PrimeNG / PrimeUI | Angular review UI components and license handling | `PRIMEUI_LICENSE` |
 
-Use `.env.example` as the committed template and place real local secrets in `.env`, which is ignored by Git.
+Use `.env.example` as the committed template. Real Gemini and PrimeUI values should be placed in `.env` locally or supplied through a private submission channel, not committed into repository history.
 
 ## Start Both APIs
 

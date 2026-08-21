@@ -50,7 +50,7 @@ For the LLM, I used the Gemini API free tier with `gemini-3.6-flash`, behind an 
 
 The review UI uses Angular, PrimeNG, PrimeUI, and Tailwind. PrimeNG provides the accessible controls used for buttons, drawer, confirmation dialogs, messages, select controls, and tables. PrimeUI license handling is isolated in a generated ignored file so the app can build without committing the token.
 
-The committed configuration template is `.env.example`. It documents the keys used by the demo without committing private secrets:
+The committed configuration template is `.env.example`. It documents every environment variable needed to run the demo:
 
 | Service | Why it is used | Configuration |
 |---|---|---|
@@ -59,7 +59,7 @@ The committed configuration template is `.env.example`. It documents the keys us
 | PrimeNG / PrimeUI | Angular review UI controls and licensed PrimeUI integration | `PRIMEUI_LICENSE` |
 | Mock accounting API | Required take-home accounting system | `ACCOUNTING_API_KEY=demo-key-1234` |
 
-I intentionally do not commit the real Gemini API key or PrimeUI license token. Those belong in a local `.env` file, which is ignored by Git.
+For evaluator setup, copy `.env.example` to `.env` and fill in the Gemini API key and PrimeUI license token. If the reviewer requires my actual temporary demo credentials, I would provide those through the private submission channel rather than the public repository history.
 
 I decided against a database, queue, CQRS, Docker, and a paid OCR provider for this demo because they were less important than showing the accounting safety boundary clearly.
 
