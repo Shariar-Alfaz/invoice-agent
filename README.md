@@ -199,8 +199,8 @@ The process returns `review` instead of registering when confidence is low, supp
 - The accounting API base URL and key are environment-specific settings.
 - LLM extraction uses Gemini by default in this local setup.
 - Supplier matching is conservative: registration number, exact normalized name, then exact normalized alias.
-- Automatic registration is attempted by `/api/invoices/process` when validation passes.
-- Dry-run is available with `register=false`.
+- The review UI does not post invoices automatically. It extracts with `register=false`, then requires reviewer approval and an explicit submit.
+- Direct API callers can still use `/api/invoices/process` without `register=false` to exercise the backend auto-registration path when validation passes.
 
 ## Known Limitations
 

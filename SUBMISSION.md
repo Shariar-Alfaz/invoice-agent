@@ -1,13 +1,13 @@
 # Submission
 
-- Name: [Your name]
+- Name: Shariar Alfaz
 - Submission date (YYYY-MM-DD): 2026-08-21
 - Hours actually spent: 8
-- Repository / how to run it: run `.\src\backend\.venv\Scripts\python.exe src\backend\run_server.py` from the repository root. This starts both the mock accounting API on `http://localhost:8080` and the Invoice Agent API on `http://127.0.0.1:8000`. Swagger is available at `http://127.0.0.1:8000/docs` only when `DEBUG=true`, and intentionally exposes only the main invoice workflow plus health. In release mode, `DEBUG=false` disables Swagger, ReDoc, and OpenAPI JSON. The review UI runs from `src/frontend` with `npm start` at `http://localhost:4200`. The backend virtual environment is under `src/backend/.venv`, so PyCharm should use `E:\projects\invoice-agent\src\backend\.venv\Scripts\python.exe` as the interpreter.
+- Repository / how to run it: run `.\src\backend\.venv\Scripts\python.exe src\backend\run_server.py` from the repository root. This starts both the mock accounting API on `http://localhost:8080` and the Invoice Agent API on `http://127.0.0.1:8000`. Swagger is available at `http://127.0.0.1:8000/docs` only when `DEBUG=true`, and intentionally exposes only the main invoice workflow plus health. In release mode, `DEBUG=false` disables Swagger, ReDoc, and OpenAPI JSON. The review UI runs from `src/frontend` with `npm start` at `http://localhost:4200`. The backend virtual environment is under `src/backend/.venv`.
 
 ## 1. Understanding the request
 
-The client described a manual invoice entry problem: accounting staff read supplier invoices, type them into the accounting system, and risk overtime, duplicate payments, and data-entry mistakes. I treated the real problem as controlled accounting intake, not just OCR. The system should extract invoice data, check it deterministically, match the supplier against the accounting master, and register only invoices that are safe enough to post.
+The client described a manual invoice entry problem: accounting staff read supplier invoices, type them into the accounting system, and risk overtime, duplicate payments, and data-entry mistakes. I treated the real problem as controlled accounting intake, not just OCR. The system should extract invoice data, check it deterministically, match the supplier against the accounting master, and let a reviewer submit only invoices that are safe enough to post.
 
 I set out to build a working demo that covers the full path for the sample invoices: document text extraction, scanned-image OCR, LLM-based structured extraction, supplier matching, validation, human review, and registration into the supplied accounting API. The important product choice was to keep a human approval boundary for uncertain or corrected invoices. A false negative is safer than silently posting a wrong invoice.
 
@@ -15,7 +15,7 @@ I set out to build a working demo that covers the full path for the sample invoi
 
 | What you wanted to ask | The assumption you made | Why |
 |---|---|---|
-| Should every invoice be posted automatically, or should low-confidence invoices require review? | Post automatically only when validation, supplier matching, duplicate checking, and accounting rules pass. Route the rest to review. | The client mentioned a near duplicate-payment incident, so safety matters more than maximizing automation. |
+| Should every invoice be posted automatically, or should low-confidence invoices require review? | Do not post automatically from the review UI. Extract every invoice into review first, then require reviewer approval before submitting to accounting. | The client mentioned a near duplicate-payment incident, so safety matters more than maximizing automation. |
 | Who is allowed to approve corrected invoice data? | Any reviewer using this local demo can approve edits, but production would require authentication and audit history. | The assignment asks for a working demo, not user management. |
 | What level of OCR/LLM confidence is acceptable for production posting? | Use configurable thresholds: `EXTRACTION_CONFIDENCE_THRESHOLD=0.85` and `OCR_CONFIDENCE_THRESHOLD=0.60`. | The assignment asks for explainable verification and the sample set contains both text PDFs and poor scans. |
 | How should supplier names with OCR mistakes be matched? | Match by registration number first, then normalized name/alias, then only conservative unique fuzzy matching. | Supplier identity is accounting-critical and should not be guessed when ambiguous. |
@@ -30,7 +30,7 @@ I built a FastAPI application with a clean-architecture layout. It supports PDF 
 
 I also built an Angular + PrimeNG + PrimeUI review screen. The UI supports upload, document preview, OCR text review, partner master loading/retry, editable invoice header fields, editable line items, line add/delete, recalculation, negative discount amounts, a back button with confirmation for unsubmitted work, and a final approve-then-submit workflow. Validation messages are collected behind a floating issue button with severity color and issue count; clicking an issue opens a side drawer and can focus the relevant field, such as an invalid registration number.
 
-The public backend workflow is `/api/invoices/process`. The review UI first calls it with `register=false`, then posts the corrected payload through the backend only after the reviewer approves the edits. Submit is disabled while there are unresolved client errors, backend validation errors, warnings/review messages, or unapproved manual edits.
+The public backend workflow is `/api/invoices/process`. The review UI always calls it with `register=false` first, then posts the corrected payload through the backend only after the reviewer approves the edits and clicks submit. Submit is disabled while there are unresolved client errors, backend validation errors, warnings/review messages, or unapproved manual edits.
 
 **What you left out, and why**
 
@@ -95,7 +95,7 @@ The app handles the accounting constraints before posting: dates are ISO formatt
 | `invoice_12.jpg` | Reconciled after table amount mismatch. | Discount rows can be negative. Line amounts are reconciled against trusted subtotal/tax/total rules and covered by a unit test. |
 | Duplicate invoice retry | Review/duplicate state. | Existing invoices are checked before POST, and `409 DUPLICATE_INVOICE` is still handled from the API. |
 
-The Angular review UI uses the same backend workflow. It calls `/api/invoices/process?register=false` first, displays OCR and extraction confidence, validation issues, warnings, OCR text, editable fields, editable line items, and partner selection. The final reviewer action posts the corrected payload through the backend so the accounting API is called only after review approval.
+The Angular review UI uses the same backend workflow. It calls `/api/invoices/process?register=false` first, displays OCR and extraction confidence, validation issues, warnings, OCR text, editable fields, editable line items, and partner selection. No invoice is posted automatically from the UI; the accounting API is called only after review approval and an explicit submit action.
 
 ## 7. Cost, limits, and risk in production
 
