@@ -2,7 +2,7 @@
   <p-confirmdialog key="back-with-unsubmitted-review" appendTo="body" />
 
   <section class="border-b border-slate-200 bg-white/95">
-    <div class="mx-auto flex max-w-[1500px] flex-col gap-3 px-6 py-4 lg:flex-row lg:items-center lg:justify-between">
+    <div class="mx-auto flex max-w-[1760px] flex-col gap-3 px-6 py-4 lg:flex-row lg:items-center lg:justify-between">
       <div class="flex min-w-0 items-center gap-3">
         <div class="min-w-0">
           <p class="text-xs font-semibold uppercase tracking-wide text-sky-700">Invoice Agent</p>
@@ -34,7 +34,7 @@
   </section>
 
   @if (!store.selectedFile() && !store.result() && !store.working()) {
-    <section class="mx-auto grid max-w-[1120px] gap-6 px-6 py-8 lg:grid-cols-[320px_minmax(0,1fr)]">
+    <section class="mx-auto grid max-w-[1760px] gap-6 px-6 py-8 lg:grid-cols-[280px_minmax(0,1fr)]">
       <app-source-file-panel
         [selectedFile]="store.selectedFile()"
         [working]="store.working()"
