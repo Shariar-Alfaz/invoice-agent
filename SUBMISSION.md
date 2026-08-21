@@ -109,7 +109,7 @@ Supplier matching is checked against `/partners` from the accounting API. The sa
 
 I also added a reconciliation step for OCR table mistakes. Invoice 12 exposed this clearly: the subtotal, tax, and total were internally consistent, but one line amount had been shifted by extraction. The backend and frontend now handle discount rows as negative amounts and can reconcile a single bad line against a trusted subtotal/tax/total. When that happens, the system adds a warning instead of pretending nothing changed.
 
-**A case where the AI got it wrong**
+**A case where the AI got it wrong** (one example is enough, if you have one)
 
 On scanned invoices, extraction sometimes missed a line unit, misread a registration number, or shifted table amounts. Those cases do not go straight to accounting. Missing units and invalid registration numbers become review issues, and clicking the issue focuses the related field. The invoice 12 amount problem is covered by a unit test so the same class of error is less likely to come back unnoticed.
 
@@ -119,7 +119,7 @@ The accounting API is wrapped in an async `httpx` client. The base URL and API k
 
 Before submitting, the app shapes the payload to match the API: dates are `YYYY-MM-DD`, amounts are integer JPY, tax codes are `T10` or `T08`, suppliers must resolve to a known `partner_code`, and line totals must match the recalculated subtotal, tax, and total. If the accounting API still rejects the invoice, the response is shown to the reviewer instead of hiding the failure.
 
-| Invoice / case | Result | How you handled it |
+| Invoice | Result | How you handled it |
 |---|---|---|
 | `invoice_02.pdf` | Registered as `P-1004 / OSK-26-0112` in local verification. | Text-layer PDF extraction worked well. Supplier and totals passed validation before submission. |
 | `invoice_04.jpg` | Requires review until fields are valid and approved. | Scanned image OCR can miss units, so submit stays blocked until the reviewer resolves issues. |
