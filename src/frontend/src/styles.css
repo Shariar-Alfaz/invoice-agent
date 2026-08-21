@@ -1,4 +1,5 @@
-@import "tailwindcss" source("./");
+@import "tailwindcss";
+@source "./";
 @import "tailwindcss-primeui";
 
 @source "./app/**/*.{html,ts}";
